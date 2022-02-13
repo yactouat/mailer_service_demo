@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+
+  # name of our service
+  mailer_service:
+    # giving to docker-compose the path of our custom Dockerfile that will define our service image
+    build:
+      context: .
+      dockerfile: mailer_service.Dockerfile
+    # setting the working directory inside the container to be created to the directory containing our app'
+    working_dir: /mailer_service
+    # mapping our project files to the app' folder within the container
+    volumes:
+      - ./:/mailer_service
+
+  nginx-server:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./:/mailer_service
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - mailer_service
